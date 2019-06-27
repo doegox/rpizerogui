@@ -27,6 +27,14 @@ class hatkeys(object):
         GPIO.setup(self._key1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self._key2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
         GPIO.setup(self._key3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        self._old_UP=0
+        self._old_DOWN=0
+        self._old_LEFT=0
+        self._old_RIGHT=0
+        self._old_PRESS=0
+        self._old_KEY1=0
+        self._old_KEY2=0
+        self._old_KEY3=0
 
     def is_ext_power_available(self):
         return GPIO.input(self._ext_power)==1
@@ -54,6 +62,135 @@ class hatkeys(object):
 
     def is_key3_pressed(self):
         return GPIO.input(self._key3)==0
+
+    def is_up_raise_event(self):
+        return self._event_raise_up
+
+    def is_down_raise_event(self):
+        return self._event_raise_down
+
+    def is_left_raise_event(self):
+        return self._event_raise_left
+
+    def is_right_raise_event(self):
+        return self._event_raise_right
+
+    def is_enter_raise_event(self):
+        return self._event_raise_enter
+
+    def is_key1_raise_event(self):
+        return self._event_raise_key1
+
+    def is_key2_raise_event(self):
+        return self._event_raise_key2
+
+    def is_key3_raise_event(self):
+        return self._event_raise_key3
+
+    def is_up_fall_event(self):
+        return self._event_fall_up
+
+    def is_down_fall_event(self):
+        return self._event_fall_down
+
+    def is_left_fall_event(self):
+        return self._event_fall_left
+
+    def is_right_fall_event(self):
+        return self._event_fall_right
+
+    def is_enter_fall_event(self):
+        return self._event_fall_enter
+
+    def is_key1_fall_event(self):
+        return self._event_fall_key1
+
+    def is_key2_fall_event(self):
+        return self._event_fall_key2
+
+    def is_key3_fall_event(self):
+        return self._event_fall_key3
+
+    def refresh_events(self):
+        self._event_raise_up=False
+        self._event_raise_down=False
+        self._event_raise_left=False
+        self._event_raise_right=False
+        self._event_raise_enter=False
+        self._event_raise_key1=False
+        self._event_raise_key2=False
+        self._event_raise_key3=False
+        self._event_fall_up=False
+        self._event_fall_down=False
+        self._event_fall_left=False
+        self._event_fall_right=False
+        self._event_fall_enter=False
+        self._event_fall_key1=False
+        self._event_fall_key2=False
+        self._event_fall_key3=False
+        if self.is_up_pressed():
+            if self._old_UP == 0:
+                self._event_raise_up=True
+            self._old_UP+=1
+        elif self._old_UP > 0:
+            self._event_fall_up=True
+            self._old_UP=0
+
+        if self.is_down_pressed():
+            if self._old_DOWN == 0:
+                self._event_raise_down=True
+            self._old_DOWN+=1
+        elif self._old_DOWN > 0:
+            self._event_fall_down=True
+            self._old_DOWN=0
+
+        if self.is_left_pressed():
+            if self._old_LEFT == 0:
+                self._event_raise_left=True
+            self._old_LEFT+=1
+        elif self._old_LEFT > 0:
+            self._event_fall_left=True
+            self._old_LEFT=0
+
+        if self.is_right_pressed():
+            if self._old_RIGHT == 0:
+                self._event_raise_right=True
+            self._old_RIGHT+=1
+        elif self._old_RIGHT > 0:
+            self._event_fall_right=True
+            self._old_RIGHT=0
+
+        if self.is_enter_pressed():
+            if self._old_PRESS == 0:
+                self._event_raise_enter=True
+            self._old_PRESS+=1
+        elif self._old_PRESS > 0:
+            self._event_fall_enter=True
+            self._old_PRESS=0
+
+        if self.is_key1_pressed():
+            if self._old_KEY1 == 0:
+                self._event_raise_key1=True
+            self._old_KEY1+=1
+        elif self._old_KEY1 > 0:
+            self._event_fall_key1=True
+            self._old_KEY1=0
+
+        if self.is_key2_pressed():
+            if self._old_KEY2 == 0:
+                self._event_raise_key2=True
+            self._old_KEY2+=1
+        elif self._old_KEY2 > 0:
+            self._event_fall_key2=True
+            self._old_KEY2=0
+
+        if self.is_key3_pressed():
+            if self._old_KEY3 == 0:
+                self._event_raise_key3=True
+            self._old_KEY3+=1
+        elif self._old_KEY3 > 0:
+            self._event_fall_key3=True
+            self._old_KEY3=0
 
 def get_keys():
     keys = hatkeys()
