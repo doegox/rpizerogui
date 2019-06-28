@@ -6,6 +6,7 @@
 #   Use arrows, Enter and F1/F2/F3
 #   Toggle Caps lock for toggling external power availability
 
+import os
 import datetime
 import time
 import subprocess
@@ -14,31 +15,24 @@ from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageColor
 
+if 'PM3PATH' in os.environ:
+    PM3PATH=os.environ['PM3PATH']
+else:
+    PM3PATH="/home/pi/proxmark3/"
+
 def tadd(a, b):
     if isinstance(b, list):
         return [(a[0]+i[0], a[1]+i[1]) for i in b]
     else:
         return (a[0]+b[0], a[1]+b[1])
 
-try:
-    from ST7789 import get_disp
-except ImportError:
-    from dummy_ST7789 import get_disp
+from ST7789 import ST7789
+from hatkeys import KEYS
+from UPS_Lite import UPS
 
-try:
-    from hatkeys import get_keys
-except ImportError:
-    from dummy_hatkeys import get_keys
-
-try:
-    from UPS_Lite import get_ups
-except ImportError:
-    from dummy_UPS_Lite import get_ups
-
-
-disp = get_disp()
-keys = get_keys()
-ups = get_ups()
+disp = ST7789()
+keys = KEYS()
+ups = UPS()
 
 # Clear display.
 disp.clear()
@@ -99,7 +93,7 @@ while True:
 
     if keys.is_enter_raise_event():
         draw.rectangle([(0, 20), (240, 240)], fill="BLACK")
-        out = subprocess.check_output(["/home/pi/proxmark3/client/proxmark3", "-p", "/dev/ttyACM0", "-c", cmds[cur_bullet]])
+        out = subprocess.check_output([PM3PATH+"/client/proxmark3", "-p", "/dev/ttyACM0", "-c", cmds[cur_bullet]])
         draw.text((0, 30), out, fill = "WHITE")
         while True:
             disp.ShowImage(image1,0,0)

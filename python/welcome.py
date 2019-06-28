@@ -1,19 +1,15 @@
 #!/usr/bin/env python
 
 import sys
+import time
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 from PIL import ImageColor
 
-try:
-    from ST7789 import get_disp
-    from hatkeys import get_keys
-    from UPS_Lite import get_ups
-except ImportError:
-    from dummy import get_disp, get_keys, get_ups
+from ST7789 import ST7789
 
-disp = get_disp()
+disp = ST7789()
 
 image1 = Image.open('pic.jpg')
 draw = ImageDraw.Draw(image1)
@@ -28,3 +24,4 @@ draw.text((22, 142), 'Wardriving', fill = "WHITE", font=font)
 draw.text((20, 140), 'Wardriving', fill = "BLACK", font=font)
 
 disp.ShowImage(image1,0,0)
+raw_input("Press key to quit")

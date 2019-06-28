@@ -1,67 +1,156 @@
 #!/usr/bin/env python
 
-import RPi.GPIO as GPIO
+dummy=False
+try:
+    import RPi.GPIO as GPIO
+except ImportError:
+    from pynput import keyboard
+    dummy=True
 
-class hatkeys(object):
+class KEYS(object):
     """class for Keys of 240*240 1.3inch OLED displays."""
 
     def __init__(self,ext_power=4, up=6, down=19, left=5, right=26, press=13, key1=21, key2=20, key3=16):
         # For ext_power to be detected, solder bridge the solder jumper
-        self._ext_power=ext_power
-        self._up=up
-        self._down=down
-        self._left=left
-        self._right=right
-        self._press=press
-        self._key1=key1
-        self._key2=key2
-        self._key3=key3
+        self._prev_UP=0
+        self._prev_DOWN=0
+        self._prev_LEFT=0
+        self._prev_RIGHT=0
+        self._prev_PRESS=0
+        self._prev_KEY1=0
+        self._prev_KEY2=0
+        self._prev_KEY3=0
+
+        if dummy: # Emulate hat buttons
+            # arrows: arrows
+            # press:  Enter
+            # key1:   F1
+            # key2:   F2
+            # key3:   F3
+            # power:  Caps lock
+            self._level_up=1
+            self._level_down=1
+            self._level_left=1
+            self._level_right=1
+            self._level_press=1
+            self._level_key1=1
+            self._level_key2=1
+            self._level_key3=1
+            self._level_ext_power=0
+            def on_press(key):
+                if key==keyboard.Key.up:
+                    self._level_up=0
+                if key==keyboard.Key.down:
+                    self._level_down=0
+                if key==keyboard.Key.left:
+                    self._level_left=0
+                if key==keyboard.Key.right:
+                    self._level_right=0
+                if key==keyboard.Key.enter:
+                    self._level_press=0
+                if key==keyboard.Key.f1:
+                    self._level_key1=0
+                if key==keyboard.Key.f2:
+                    self._level_key2=0
+                if key==keyboard.Key.f3:
+                    self._level_key3=0
+                if key==keyboard.Key.caps_lock:
+                    self._level_ext_power^=1
+
+            def on_release(key):
+                if key == keyboard.Key.esc:
+                    # Stop listener
+                    return False
+                if key==keyboard.Key.up:
+                    self._level_up=1
+                if key==keyboard.Key.down:
+                    self._level_down=1
+                if key==keyboard.Key.left:
+                    self._level_left=1
+                if key==keyboard.Key.right:
+                    self._level_right=1
+                if key==keyboard.Key.enter:
+                    self._level_press=1
+                if key==keyboard.Key.f1:
+                    self._level_key1=1
+                if key==keyboard.Key.f2:
+                    self._level_key2=1
+                if key==keyboard.Key.f3:
+                    self._level_key3=1
+
+            listener = keyboard.Listener(
+                on_press=on_press,
+                on_release=on_release)
+            listener.start()
+            self.refresh_events()
+            return
+        # else: non dummy:
+        self._gpio_ext_power=ext_power
+        self._gpio_up=up
+        self._gpio_down=down
+        self._gpio_left=left
+        self._gpio_right=right
+        self._gpio_press=press
+        self._gpio_key1=key1
+        self._gpio_key2=key2
+        self._gpio_key3=key3
         GPIO.setmode(GPIO.BCM)
         GPIO.setwarnings(False)
-        GPIO.setup(self._ext_power, GPIO.IN, pull_up_down=GPIO.PUD_OFF)
-        GPIO.setup(self._up, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._down, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._left, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._right, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._press, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._key1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._key2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        GPIO.setup(self._key3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        self._old_UP=0
-        self._old_DOWN=0
-        self._old_LEFT=0
-        self._old_RIGHT=0
-        self._old_PRESS=0
-        self._old_KEY1=0
-        self._old_KEY2=0
-        self._old_KEY3=0
+        GPIO.setup(self._gpio_ext_power, GPIO.IN, pull_up_down=GPIO.PUD_OFF)
+        GPIO.setup(self._gpio_up, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_down, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_left, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_right, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_press, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_key1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_key2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup(self._gpio_key3, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        self.refresh_events()
 
     def is_ext_power_available(self):
-        return GPIO.input(self._ext_power)==1
+        if dummy:
+            return self._level_ext_power
+        return GPIO.input(self._gpio_ext_power)==1
 
     def is_up_pressed(self):
-        return GPIO.input(self._up)==0
+        if dummy:
+            return not self._level_up
+        return GPIO.input(self._gpio_up)==0
 
     def is_down_pressed(self):
-        return GPIO.input(self._down)==0
+        if dummy:
+            return not self._level_down
+        return GPIO.input(self._gpio_down)==0
 
     def is_left_pressed(self):
-        return GPIO.input(self._left)==0
+        if dummy:
+            return not self._level_left
+        return GPIO.input(self._gpio_left)==0
 
     def is_right_pressed(self):
-        return GPIO.input(self._right)==0
+        if dummy:
+            return not self._level_right
+        return GPIO.input(self._gpio_right)==0
 
     def is_enter_pressed(self):
-        return GPIO.input(self._press)==0
+        if dummy:
+            return not self._level_press
+        return GPIO.input(self._gpio_press)==0
 
     def is_key1_pressed(self):
-        return GPIO.input(self._key1)==0
+        if dummy:
+            return not self._level_key1
+        return GPIO.input(self._gpio_key1)==0
 
     def is_key2_pressed(self):
-        return GPIO.input(self._key2)==0
+        if dummy:
+            return not self._level_key2
+        return GPIO.input(self._gpio_key2)==0
 
     def is_key3_pressed(self):
-        return GPIO.input(self._key3)==0
+        if dummy:
+            return not self._level_key3
+        return GPIO.input(self._gpio_key3)==0
 
     def is_up_raise_event(self):
         return self._event_raise_up
@@ -129,77 +218,78 @@ class hatkeys(object):
         self._event_fall_key2=False
         self._event_fall_key3=False
         if self.is_up_pressed():
-            if self._old_UP == 0:
+            if self._prev_UP == 0:
                 self._event_raise_up=True
-            self._old_UP+=1
-        elif self._old_UP > 0:
+            self._prev_UP+=1
+        elif self._prev_UP > 0:
             self._event_fall_up=True
-            self._old_UP=0
+            self._prev_UP=0
 
         if self.is_down_pressed():
-            if self._old_DOWN == 0:
+            if self._prev_DOWN == 0:
                 self._event_raise_down=True
-            self._old_DOWN+=1
-        elif self._old_DOWN > 0:
+            self._prev_DOWN+=1
+        elif self._prev_DOWN > 0:
             self._event_fall_down=True
-            self._old_DOWN=0
+            self._prev_DOWN=0
 
         if self.is_left_pressed():
-            if self._old_LEFT == 0:
+            if self._prev_LEFT == 0:
                 self._event_raise_left=True
-            self._old_LEFT+=1
-        elif self._old_LEFT > 0:
+            self._prev_LEFT+=1
+        elif self._prev_LEFT > 0:
             self._event_fall_left=True
-            self._old_LEFT=0
+            self._prev_LEFT=0
 
         if self.is_right_pressed():
-            if self._old_RIGHT == 0:
+            if self._prev_RIGHT == 0:
                 self._event_raise_right=True
-            self._old_RIGHT+=1
-        elif self._old_RIGHT > 0:
+            self._prev_RIGHT+=1
+        elif self._prev_RIGHT > 0:
             self._event_fall_right=True
-            self._old_RIGHT=0
+            self._prev_RIGHT=0
 
         if self.is_enter_pressed():
-            if self._old_PRESS == 0:
+            if self._prev_PRESS == 0:
                 self._event_raise_enter=True
-            self._old_PRESS+=1
-        elif self._old_PRESS > 0:
+            self._prev_PRESS+=1
+        elif self._prev_PRESS > 0:
             self._event_fall_enter=True
-            self._old_PRESS=0
+            self._prev_PRESS=0
 
         if self.is_key1_pressed():
-            if self._old_KEY1 == 0:
+            if self._prev_KEY1 == 0:
                 self._event_raise_key1=True
-            self._old_KEY1+=1
-        elif self._old_KEY1 > 0:
+            self._prev_KEY1+=1
+        elif self._prev_KEY1 > 0:
             self._event_fall_key1=True
-            self._old_KEY1=0
+            self._prev_KEY1=0
 
         if self.is_key2_pressed():
-            if self._old_KEY2 == 0:
+            if self._prev_KEY2 == 0:
                 self._event_raise_key2=True
-            self._old_KEY2+=1
-        elif self._old_KEY2 > 0:
+            self._prev_KEY2+=1
+        elif self._prev_KEY2 > 0:
             self._event_fall_key2=True
-            self._old_KEY2=0
+            self._prev_KEY2=0
 
         if self.is_key3_pressed():
-            if self._old_KEY3 == 0:
+            if self._prev_KEY3 == 0:
                 self._event_raise_key3=True
-            self._old_KEY3+=1
-        elif self._old_KEY3 > 0:
+            self._prev_KEY3+=1
+        elif self._prev_KEY3 > 0:
             self._event_fall_key3=True
-            self._old_KEY3=0
+            self._prev_KEY3=0
 
-def get_keys():
-    keys = hatkeys()
-    return keys
+    def cleanup(self):
+        if dummy:
+            return
+        GPIO.cleanup()
 
 if __name__=='__main__':
     import time
     import sys
-    keys = get_keys()
+    keys = KEYS()
     old_UP=False
     old_DOWN=False
     old_LEFT=False
@@ -277,5 +367,5 @@ if __name__=='__main__':
             time.sleep(0.1)
     finally:
         print("Bye!")
-        GPIO.cleanup()
+        keys.cleanup()
         sys.exit(0)

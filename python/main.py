@@ -18,25 +18,13 @@ def tadd(a, b):
     else:
         return (a[0]+b[0], a[1]+b[1])
 
-try:
-    from ST7789 import get_disp
-except ImportError:
-    from dummy_ST7789 import get_disp
+from ST7789 import ST7789
+from hatkeys import KEYS
+from UPS_Lite import UPS
 
-try:
-    from hatkeys import get_keys
-except ImportError:
-    from dummy_hatkeys import get_keys
-
-try:
-    from UPS_Lite import get_ups
-except ImportError:
-    from dummy_UPS_Lite import get_ups
-
-
-disp = get_disp()
-keys = get_keys()
-ups = get_ups()
+disp = ST7789()
+keys = KEYS()
+ups = UPS()
 
 # Clear display.
 disp.clear()

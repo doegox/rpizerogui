@@ -1,17 +1,30 @@
 #!/usr/bin/env python
 
-import spidev as SPI
-import RPi.GPIO as GPIO
 import time
 import numpy as np
+
+dummy=False
+try:
+    import spidev as SPI
+    import RPi.GPIO as GPIO
+except ImportError:
+    import matplotlib.pyplot as plt
+    FACTOR=2
+    dummy=True
 
 
 class ST7789(object):
     """class for ST7789  240*240 1.3inch OLED displays."""
 
-    def __init__(self,spi,rst = 27,dc = 25,bl = 24):
+    def __init__(self,bus = 0,device = 0,rst = 27,dc = 25,bl = 24):
         self.width = 240
         self.height = 240
+        if dummy:
+            plt.ion()
+            plt.gcf().set_size_inches(self.width*FACTOR/72, self.height*FACTOR/72)
+            plt.gca().set_axis_off()
+            return
+        spi = SPI.SpiDev(bus, device)
         #Initialize DC RST pin
         self._dc = dc
         self._rst = rst
@@ -25,6 +38,7 @@ class ST7789(object):
         #Initialize SPI
         self._spi = spi
         self._spi.max_speed_hz = 40000000
+        self.Init()
 
     """    Write register address and data     """
     def command(self, cmd):
@@ -148,6 +162,12 @@ class ST7789(object):
         if imwidth != self.width or imheight != self.height:
             raise ValueError('Image must be same dimensions as display \
                 ({0}x{1}).' .format(self.width, self.height))
+        if dummy:
+            plt.clf()
+            plt.gca().set_axis_off()
+            plt.imshow(Image)
+            plt.pause(0.01)
+            return
         img = np.asarray(Image)
         pix = np.zeros((self.width,self.height,2), dtype = np.uint8)
         pix[...,[0]] = np.add(np.bitwise_and(img[...,[0]],0xF8),np.right_shift(img[...,[1]],5))
@@ -160,26 +180,21 @@ class ST7789(object):
 
     def clear(self):
         """Clear contents of image buffer"""
+        if dummy:
+            plt.clf()
+            plt.pause(0.01)
+            return
         _buffer = [0x00]*(self.width * self.height * 2)
         self.SetWindows ( 0, 0, self.width, self.height)
         GPIO.output(self._dc,GPIO.HIGH)
         for i in range(0,len(_buffer),4096):
             self._spi.writebytes(_buffer[i:i+4096])
 
-# 240x240 display with hardware SPI:
-def get_disp():
-    bus = 0
-    device = 0
-    disp = ST7789(SPI.SpiDev(bus, device))
-    # Initialize library.
-    disp.Init()
-    return disp
-
 if __name__=='__main__':
     from PIL import Image
     from PIL import ImageDraw
     from PIL import ImageFont
-    disp = get_disp()
+    disp = ST7789()
     image1 = Image.open('pic.jpg')
     draw = ImageDraw.Draw(image1)
     font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 32)

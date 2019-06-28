@@ -1,12 +1,9 @@
 ## UPS_Lite
 
 ```
-try:
-    from UPS_Lite import get_ups
-except ImportError:
-    from dummy_UPS_Lite import get_ups
+from UPS_Lite import UPS
 
-ups = get_ups()
+ups = UPS()
 ups.get_voltage()
 ups.get_capacity()
 ```
@@ -14,12 +11,9 @@ ups.get_capacity()
 ## ST7789
 
 ```
-try:
-    from ST7789 import get_disp
-except ImportError:
-    from dummy_ST7789 import get_disp
+from ST7789 import ST7789
 
-disp = get_disp()
+disp = ST7789()
 disp.clear()
 image1 = Image.open('pic.jpg')
 disp.ShowImage(image1,0,0)
@@ -28,12 +22,9 @@ disp.ShowImage(image1,0,0)
 ## hatkeys
 
 ```
-try:
-    from hatkeys import get_keys
-except ImportError:
-    from dummy_hatkeys import get_keys
+from hatkeys import KEYS
 
-keys = get_keys()
+keys = KEYS()
 if keys.is_up_pressed():
     print "UP pressed"
 if keys.is_ext_power_available():
