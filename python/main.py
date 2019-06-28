@@ -36,39 +36,6 @@ draw = ImageDraw.Draw(image1)
 
 font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 32)
 
-# Press
-draw.ellipse((90-25, 120-25, 90+25, 120+25), outline="BLUE", fill="WHITE")
-draw.text((82, 112), "P", fill = "BLUE", font=font)
-
-# Left
-draw.rectangle([(15, 95), (65, 145)], outline="BLUE", fill="WHITE")
-draw.text((32, 112), "L", fill = "BLUE", font=font)
-
-# Down
-draw.rectangle([(65, 145), (115, 195)], outline = "BLUE", fill="WHITE")
-draw.text((82, 162), "D", fill = "BLUE", font=font)
-
-# Right
-draw.rectangle([(115, 95), (165, 145)], outline = "BLUE", fill="WHITE")
-draw.text((132, 112), "R", fill = "BLUE", font=font)
-
-# Up
-draw.rectangle([(65, 45), (115, 95)], outline = "BLUE", fill="WHITE")
-draw.text((82, 62), "U", fill = "BLUE", font=font)
-
-# Key1
-draw.rectangle([(185, 35), (235, 85)], outline = "BLUE", fill="WHITE")
-draw.text((195, 52), "K1", fill = "BLUE", font=font)
-
-# Key2
-draw.rectangle([(185, 95), (235, 145)], outline = "BLUE", fill="WHITE")
-draw.text((195, 112), "K2", fill = "BLUE", font=font)
-
-# Key3
-draw.rectangle([(185, 155), (235, 205)], outline = "BLUE", fill="WHITE")
-draw.text((195, 172), "K3", fill = "BLUE", font=font)
-
-
 MAXCOUNTER=20
 counter=MAXCOUNTER
 XYVAL=(130, 6)
@@ -76,10 +43,27 @@ XYBAT=(208, 5)
 XYPOW=(190, 2)
 COUNT_DOWN=0
 
+keydict = {
+    'up':    {'rect':[(65, 45), (115, 95)],          'txtpos': (82, 62),   'txt': 'U'},
+    'down':  {'rect':[(65, 145), (115, 195)],        'txtpos': (82, 162),  'txt': 'D'},
+    'left':  {'rect':[(15, 95), (65, 145)],          'txtpos': (32, 112),  'txt': 'L'},
+    'right': {'rect':[(115, 95), (165, 145)],        'txtpos': (132, 112), 'txt': 'R'},
+    'enter': {'circ':(90-25, 120-25, 90+25, 120+25), 'txtpos': (82, 112),  'txt': 'P'},
+    'key1':  {'rect':[(185, 35), (235, 85)],         'txtpos': (195, 52),  'txt': 'K1'},
+    'key2':  {'rect':[(185, 95), (235, 145)],        'txtpos': (195, 112), 'txt': 'K2'},
+    'key3':  {'rect':[(185, 155), (235, 205)],       'txtpos': (195, 172), 'txt': 'K3'}
+}
+for key in keydict.keys():
+    if 'rect' in keydict[key]:
+        draw.rectangle(keydict[key]['rect'], outline = "BLUE", fill="WHITE")
+    elif 'circ' in keydict[key]:
+        draw.ellipse(keydict[key]['circ'], outline = "BLUE", fill="WHITE")
+    draw.text(keydict[key]['txtpos'], keydict[key]['txt'], fill = "BLUE", font=font)
+
 while True:
     keys.refresh_events()
 
-    if keys.is_down_pressed():
+    if keys.is_pressed('down'):
         if COUNT_DOWN > 5:
             disp.clear()
             time.sleep(0.6)
@@ -104,69 +88,20 @@ while True:
             draw.polygon(tadd(XYPOW, [(7,0), (0,10), (4,9), (1,16), (10,6), (5,7)]), fill="LIGHTGREEN")
     counter+=1
 
-    if keys.is_up_raise_event():
-        draw.rectangle([(65, 45), (115, 95)], outline = "BLUE", fill="RED")
-        draw.text((82, 62), "U", fill = "BLUE", font=font)
-        print "UP pressed"
-    if keys.is_up_fall_event():
-        draw.rectangle([(65, 45), (115, 95)], outline = "BLUE", fill="WHITE")
-        draw.text((82, 62), "U", fill = "BLUE", font=font)
-        print "UP released"
-    if keys.is_down_raise_event():
-        draw.rectangle([(65, 145), (115, 195)], outline = "BLUE", fill="RED")
-        draw.text((82, 162), "D", fill = "BLUE", font=font)
-        print "DOWN pressed"
-    if keys.is_down_fall_event():
-        draw.rectangle([(65, 145), (115, 195)], outline = "BLUE", fill="WHITE")
-        draw.text((82, 162), "D", fill = "BLUE", font=font)
-        print "DOWN released"
-    if keys.is_left_raise_event():
-        draw.rectangle([(15, 95), (65, 145)], outline="BLUE", fill="RED")
-        draw.text((32, 112), "L", fill = "BLUE", font=font)
-        print "LEFT pressed"
-    if keys.is_left_fall_event():
-        draw.rectangle([(15, 95), (65, 145)], outline="BLUE", fill="WHITE")
-        draw.text((32, 112), "L", fill = "BLUE", font=font)
-        print "LEFT released"
-    if keys.is_right_raise_event():
-        draw.rectangle([(115, 95), (165, 145)], outline = "BLUE", fill="RED")
-        draw.text((132, 112), "R", fill = "BLUE", font=font)
-        print "RIGHT pressed"
-    if keys.is_right_fall_event():
-        draw.rectangle([(115, 95), (165, 145)], outline = "BLUE", fill="WHITE")
-        draw.text((132, 112), "R", fill = "BLUE", font=font)
-        print "RIGHT released"
-    if keys.is_enter_raise_event():
-        draw.ellipse((90-25, 120-25, 90+25, 120+25), outline="BLUE", fill="RED")
-        draw.text((82, 112), "P", fill = "BLUE", font=font)
-        print "PRESS pressed"
-    if keys.is_enter_fall_event():
-        draw.ellipse((90-25, 120-25, 90+25, 120+25), outline="BLUE", fill="WHITE")
-        draw.text((82, 112), "P", fill = "BLUE", font=font)
-        print "PRESS released"
-    if keys.is_key1_raise_event():
-        draw.rectangle([(185, 35), (235, 85)], outline = "BLUE", fill="RED")
-        draw.text((195, 52), "K1", fill = "BLUE", font=font)
-        print "KEY1 pressed"
-    if keys.is_key1_fall_event():
-        draw.rectangle([(185, 35), (235, 85)], outline = "BLUE", fill="WHITE")
-        draw.text((195, 52), "K1", fill = "BLUE", font=font)
-        print "KEY1 released"
-    if keys.is_key2_raise_event():
-        draw.rectangle([(185, 95), (235, 145)], outline = "BLUE", fill="RED")
-        draw.text((195, 112), "K2", fill = "BLUE", font=font)
-        print "KEY2 pressed"
-    if keys.is_key2_fall_event():
-        draw.rectangle([(185, 95), (235, 145)], outline = "BLUE", fill="WHITE")
-        draw.text((195, 112), "K2", fill = "BLUE", font=font)
-        print "KEY2 released"
-    if keys.is_key3_raise_event():
-        draw.rectangle([(185, 155), (235, 205)], outline = "BLUE", fill="RED")
-        draw.text((195, 172), "K3", fill = "BLUE", font=font)
-        print "KEY3 pressed"
-    if keys.is_key3_fall_event():
-        draw.rectangle([(185, 155), (235, 205)], outline = "BLUE", fill="WHITE")
-        draw.text((195, 172), "K3", fill = "BLUE", font=font)
-        print "KEY3 released"
+    for key in keydict.keys():
+        if keys.is_raise_event(key):
+            if 'rect' in keydict[key]:
+                draw.rectangle(keydict[key]['rect'], outline = "BLUE", fill="RED")
+            elif 'circ' in keydict[key]:
+                draw.ellipse(keydict[key]['circ'], outline = "BLUE", fill="RED")
+            draw.text(keydict[key]['txtpos'], keydict[key]['txt'], fill = "BLUE", font=font)
+            print "%s pressed" % key
+        if keys.is_fall_event(key):
+            if 'rect' in keydict[key]:
+                draw.rectangle(keydict[key]['rect'], outline = "BLUE", fill="WHITE")
+            elif 'circ' in keydict[key]:
+                draw.ellipse(keydict[key]['circ'], outline = "BLUE", fill="WHITE")
+            draw.text(keydict[key]['txtpos'], keydict[key]['txt'], fill = "BLUE", font=font)
+            print "%s released" % key
 
     disp.ShowImage(image1,0,0)

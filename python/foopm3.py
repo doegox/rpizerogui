@@ -66,7 +66,7 @@ init_cmds()
 while True:
     keys.refresh_events()
 
-    if keys.is_down_pressed():
+    if keys.is_pressed('down'):
         if COUNT_DOWN > 5:
             disp.clear()
             time.sleep(0.6)
@@ -75,7 +75,7 @@ while True:
     else:
         COUNT_DOWN=0
 
-    if keys.is_up_raise_event():
+    if keys.is_raise_event('up'):
         draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="WHITE")
         if cur_bullet == 0:
             cur_bullet = max_bullet
@@ -83,7 +83,7 @@ while True:
             cur_bullet-=1
         draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="RED")
 
-    if keys.is_down_raise_event():
+    if keys.is_raise_event('down'):
         draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="WHITE")
         if cur_bullet == max_bullet:
             cur_bullet = 0
@@ -91,14 +91,14 @@ while True:
             cur_bullet+=1
         draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="RED")
 
-    if keys.is_enter_raise_event():
+    if keys.is_raise_event('enter'):
         draw.rectangle([(0, 20), (240, 240)], fill="BLACK")
         out = subprocess.check_output([PM3PATH+"/client/proxmark3", "-p", "/dev/ttyACM0", "-c", cmds[cur_bullet]])
         draw.text((0, 30), out, fill = "WHITE")
         while True:
             disp.ShowImage(image1,0,0)
             keys.refresh_events()
-            if keys.is_left_pressed():
+            if keys.is_raise_event('left'):
                 break
         init_cmds()
 

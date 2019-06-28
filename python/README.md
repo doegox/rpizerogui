@@ -25,7 +25,7 @@ disp.ShowImage(image1,0,0)
 from hatkeys import KEYS
 
 keys = KEYS()
-if keys.is_up_pressed():
+if keys.is_pressed('up'):
     print "UP pressed"
 if keys.is_ext_power_available():
     print "Power applied"
