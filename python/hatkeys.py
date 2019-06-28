@@ -28,55 +28,26 @@ class KEYS(object):
             # key2:   F2
             # key3:   F3
             # power:  Caps lock
-            self._level_up=1
-            self._level_down=1
-            self._level_left=1
-            self._level_right=1
-            self._level_press=1
-            self._level_key1=1
-            self._level_key2=1
-            self._level_key3=1
+            self._keydict={
+                keyboard.Key.up: 1,
+                keyboard.Key.down: 1,
+                keyboard.Key.left: 1,
+                keyboard.Key.right: 1,
+                keyboard.Key.enter: 1,
+                keyboard.Key.f1: 1,
+                keyboard.Key.f2: 1,
+                keyboard.Key.f3: 1
+            }
             self._level_ext_power=0
             def on_press(key):
-                if key==keyboard.Key.up:
-                    self._level_up=0
-                if key==keyboard.Key.down:
-                    self._level_down=0
-                if key==keyboard.Key.left:
-                    self._level_left=0
-                if key==keyboard.Key.right:
-                    self._level_right=0
-                if key==keyboard.Key.enter:
-                    self._level_press=0
-                if key==keyboard.Key.f1:
-                    self._level_key1=0
-                if key==keyboard.Key.f2:
-                    self._level_key2=0
-                if key==keyboard.Key.f3:
-                    self._level_key3=0
+                if key in self._keydict:
+                    self._keydict[key] = 0
                 if key==keyboard.Key.caps_lock:
                     self._level_ext_power^=1
 
             def on_release(key):
-                if key == keyboard.Key.esc:
-                    # Stop listener
-                    return False
-                if key==keyboard.Key.up:
-                    self._level_up=1
-                if key==keyboard.Key.down:
-                    self._level_down=1
-                if key==keyboard.Key.left:
-                    self._level_left=1
-                if key==keyboard.Key.right:
-                    self._level_right=1
-                if key==keyboard.Key.enter:
-                    self._level_press=1
-                if key==keyboard.Key.f1:
-                    self._level_key1=1
-                if key==keyboard.Key.f2:
-                    self._level_key2=1
-                if key==keyboard.Key.f3:
-                    self._level_key3=1
+                if key in self._keydict:
+                    self._keydict[key] = 1
 
             listener = keyboard.Listener(
                 on_press=on_press,
@@ -114,42 +85,42 @@ class KEYS(object):
 
     def is_up_pressed(self):
         if dummy:
-            return not self._level_up
+            return self._keydict[keyboard.Key.up] == 0
         return GPIO.input(self._gpio_up)==0
 
     def is_down_pressed(self):
         if dummy:
-            return not self._level_down
+            return self._keydict[keyboard.Key.down] == 0
         return GPIO.input(self._gpio_down)==0
 
     def is_left_pressed(self):
         if dummy:
-            return not self._level_left
+            return self._keydict[keyboard.Key.left] == 0
         return GPIO.input(self._gpio_left)==0
 
     def is_right_pressed(self):
         if dummy:
-            return not self._level_right
+            return self._keydict[keyboard.Key.right] == 0
         return GPIO.input(self._gpio_right)==0
 
     def is_enter_pressed(self):
         if dummy:
-            return not self._level_press
+            return self._keydict[keyboard.Key.enter] == 0
         return GPIO.input(self._gpio_press)==0
 
     def is_key1_pressed(self):
         if dummy:
-            return not self._level_key1
+            return self._keydict[keyboard.Key.f1] == 0
         return GPIO.input(self._gpio_key1)==0
 
     def is_key2_pressed(self):
         if dummy:
-            return not self._level_key2
+            return self._keydict[keyboard.Key.f2] == 0
         return GPIO.input(self._gpio_key2)==0
 
     def is_key3_pressed(self):
         if dummy:
-            return not self._level_key3
+            return self._keydict[keyboard.Key.f3] == 0
         return GPIO.input(self._gpio_key3)==0
 
     def is_up_raise_event(self):
