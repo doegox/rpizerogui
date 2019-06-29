@@ -67,6 +67,7 @@ systemctl --user enable foopm3
 
 * pull to left for 2s from main screen to quit. As it's a service it'll be restarted automatically.
 * create "maintenance" file in `~/rpizerogui/python` to stall foopm3 service and be able to use the LCD
+* it expects proxmark repo to be in `/home/pi/proxmark3/`, else define it in envvar `PM3PATH`.
 
 ## TODO list
 

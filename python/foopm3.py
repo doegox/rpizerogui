@@ -111,6 +111,8 @@ XYNET=(5, 16)
 COUNT_DOWN=0
 cur_bullet=0
 max_bullet=2
+# nr of chars with the default font:
+TXTWIDTH=39
 
 init_cmds()
 while True:
@@ -173,8 +175,7 @@ while True:
         # network info
         SSID = get_wifi_ssid()
         IP = get_ip()
-        draw.text(XYNET, IP + (" " * (39 - len(SSID) - len(IP))) + SSID, fill = "YELLOW")
+        draw.text(XYNET, IP + (" " * (TXTWIDTH - len(SSID) - len(IP))) + SSID, fill = "YELLOW")
     counter+=1
-
 
     disp.ShowImage(image1,0,0)
