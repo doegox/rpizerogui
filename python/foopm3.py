@@ -38,13 +38,28 @@ ups = UPS()
 
 # Clear display.
 disp.clear()
+font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 32)
+
+# Welcome screen
+
+image1 = Image.open(os.path.join(scriptpath, 'pic.jpg'))
+draw = ImageDraw.Draw(image1)
+draw.rectangle([(15,70),(195,100)],fill = "BLACK")
+draw.text((20, 70), 'Proxmark3', fill = "LIGHTBLUE", font=font)
+draw.text((19, 139), 'Wardriving', fill = "WHITE", font=font)
+draw.text((19, 142), 'Wardriving', fill = "WHITE", font=font)
+draw.text((22, 139), 'Wardriving', fill = "WHITE", font=font)
+draw.text((22, 142), 'Wardriving', fill = "WHITE", font=font)
+draw.text((20, 140), 'Wardriving', fill = "BLACK", font=font)
+disp.ShowImage(image1,0,0)
+del(image1)
+del(draw)
+time.sleep(2)
 
 # Create blank image for drawing.
 image1 = Image.new("RGB", (disp.width, disp.height), "BLACK")
 #image1 = Image.open(os.path.join(scriptpath, 'illuminated_rfid_240.png'))
 draw = ImageDraw.Draw(image1)
-
-font32 = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 32)
 
 cmds=["hw status", "hf search", "lf search"]
 def init_cmds():
