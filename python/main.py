@@ -22,6 +22,7 @@ from ST7789 import ST7789
 from hatkeys import KEYS
 from UPS_Lite import UPS
 
+scriptpath = os.path.dirname(os.path.realpath(__file__))
 disp = ST7789()
 keys = KEYS()
 ups = UPS()
@@ -31,7 +32,7 @@ disp.clear()
 
 # Create blank image for drawing.
 #image1 = Image.new("RGB", (disp.width, disp.height), "WHITE")
-image1 = Image.open('pic.jpg')
+image1 = Image.open(os.path.join(scriptpath, 'pic.jpg'))
 draw = ImageDraw.Draw(image1)
 
 font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf', 32)
