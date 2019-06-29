@@ -1,0 +1,9 @@
+[Unit]
+Description=My Process
+
+[Service]
+ExecStart=/home/pi/rpizerogui/python/foopm3.py
+Restart=always
+
+[Install]
+WantedBy=default.target

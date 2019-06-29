@@ -45,3 +45,18 @@ It requires the solder jumper to be bridged.
 |key2     |key2      | F2            |
 |key3     |key3      | F3            |
 |ext_power|UPS usb   | Caps lock     |
+
+
+## foopm3
+
+First attempt at a GUI...
+
+To install it as a startup service:
+
+```
+mkdir -p ~/.config/systemd/user/
+ln -s ~/rpizerogui/python/foopm3.service ~/.config/systemd/user/
+# Make sure user service scripts are started without waiting for user login:
+sudo loginctl enable-linger pi
+systemctl --user enable foopm3
+```
