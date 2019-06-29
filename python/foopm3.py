@@ -101,6 +101,31 @@ def init_cmds():
         draw.text((20, (YCMD+15*i)), cmds[i], fill = "white")
     draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="RED")
 
+def display_output(out):
+    outlist = []
+    for l in out.split('\n'):
+        outlist += [ l[i:i+TXTWIDTH] for i in range(0, len(l.rstrip()), TXTWIDTH) ]
+    off = 0
+    max_off = max(0, len(outlist) - TXTHEIGHT//2)
+    while True:
+        draw.rectangle([(0, YCMD), (240, 240)], fill="BLACK")
+        outlistscreen = '\n'.join(outlist[off:TXTHEIGHT+off])
+        draw.text((0, YCMD), outlistscreen, fill = "WHITE")
+        disp.ShowImage(image1,0,0)
+        keys.refresh_events()
+        if keys.is_raise_event('left'):
+            break
+        if keys.is_pressed('up'):
+            if off == 0:
+                off = max_off
+            else:
+                off -= 1
+        if keys.is_pressed('down'):
+            if off == max_off:
+                off = 0
+            else:
+                off += 1
+
 MAXCOUNTER=8
 counter=MAXCOUNTER
 XYVAL=(130, 6)
@@ -113,6 +138,7 @@ cur_bullet=0
 max_bullet=2
 # nr of chars with the default font:
 TXTWIDTH=39
+TXTHEIGHT=14
 
 init_cmds()
 while True:
@@ -144,14 +170,11 @@ while True:
         draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="RED")
 
     if keys.is_raise_event('enter'):
-        draw.rectangle([(0, 20), (240, 240)], fill="BLACK")
+        draw.rectangle([(0, YCMD), (240, 240)], fill="BLACK")
+        draw.text((0, YCMD), "Please wait...", fill = "WHITE")
+        disp.ShowImage(image1,0,0)
         out = subprocess.check_output([PM3PATH+"/client/proxmark3", "-p", "/dev/ttyACM0", "-c", cmds[cur_bullet]])
-        draw.text((0, 30), out, fill = "WHITE")
-        while True:
-            disp.ShowImage(image1,0,0)
-            keys.refresh_events()
-            if keys.is_raise_event('left'):
-                break
+        display_output(out)
         init_cmds()
 
     if counter == MAXCOUNTER:

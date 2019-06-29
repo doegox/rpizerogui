@@ -75,11 +75,6 @@ systemctl --user enable foopm3
 * detect when pm3 is not connected and handle it properly
 * GUI menus, see below
 
-For shell/proxmark commands:
-
-* wrap results display
-* scroll results display
-
 ### TODO menu Level 1: Shell commands
 
 * reactivate fb and get shell with BT/USB keyboard??
