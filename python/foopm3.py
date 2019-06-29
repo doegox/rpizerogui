@@ -26,6 +26,28 @@ def tadd(a, b):
     else:
         return (a[0]+b[0], a[1]+b[1])
 
+def get_wifi_ssid():
+    scanoutput = subprocess.check_output(["iw", "wlan0", "info"])
+    try:
+        for line in scanoutput.split('\n'):
+            line = line.decode("utf-8").strip()
+            if line[:4]  == "ssid":
+                ssid = line.split()[1]
+    except:
+        ssid = "WiFi not found"
+    return ssid
+
+def get_ip():
+    ipoutput = subprocess.check_output(["ip", "-f", "inet", "addr", "show", "wlan0"])
+    try:
+        for line in ipoutput.split('\n'):
+            line = line.decode("utf-8").strip()
+            if line[:4]  == "inet":
+                ip = line.split()[1].split('/')[0]
+    except:
+        ip = "IP not found"
+    return ip
+
 from ST7789 import ST7789
 from hatkeys import KEYS
 from UPS_Lite import UPS
@@ -71,12 +93,13 @@ image1 = Image.new("RGB", (disp.width, disp.height), "BLACK")
 draw = ImageDraw.Draw(image1)
 
 cmds=["hw status", "hf search", "lf search"]
+YCMD=30
 def init_cmds():
-    draw.rectangle([(0, 20), (240, 240)], fill="BLACK")
+    draw.rectangle([(0, YCMD), (240, 240)], fill="BLACK")
     for i in range(len(cmds)):
-        draw.ellipse((10-5, (30+15*i)-5, 10+5, (30+15*i)+5), outline="BLACK", fill="WHITE")
-        draw.text((20, (25+15*i)), cmds[i], fill = "white")
-    draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="RED")
+        draw.ellipse((10-5, (YCMD+15*i), 10+5, (YCMD+15*i)+10), outline="BLACK", fill="WHITE")
+        draw.text((20, (YCMD+15*i)), cmds[i], fill = "white")
+    draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="RED")
 
 MAXCOUNTER=8
 counter=MAXCOUNTER
@@ -84,6 +107,7 @@ XYVAL=(130, 6)
 XYBAT=(208, 5)
 XYPOW=(192, 2)
 XYTIM=(5, 5)
+XYNET=(5, 16)
 COUNT_DOWN=0
 cur_bullet=0
 max_bullet=2
@@ -92,7 +116,7 @@ init_cmds()
 while True:
     keys.refresh_events()
 
-    if keys.is_pressed('down'):
+    if keys.is_pressed('left'):
         if COUNT_DOWN > 5:
             disp.clear()
             time.sleep(0.6)
@@ -102,20 +126,20 @@ while True:
         COUNT_DOWN=0
 
     if keys.is_raise_event('up'):
-        draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="WHITE")
+        draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="WHITE")
         if cur_bullet == 0:
             cur_bullet = max_bullet
         else:
             cur_bullet-=1
-        draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="RED")
+        draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="RED")
 
     if keys.is_raise_event('down'):
-        draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="WHITE")
+        draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="WHITE")
         if cur_bullet == max_bullet:
             cur_bullet = 0
         else:
             cur_bullet+=1
-        draw.ellipse((10-5, (30+15*cur_bullet)-5, 10+5, (30+15*cur_bullet)+5), outline="BLACK", fill="RED")
+        draw.ellipse((10-5, (YCMD+15*cur_bullet), 10+5, (YCMD+15*cur_bullet)+10), outline="BLACK", fill="RED")
 
     if keys.is_raise_event('enter'):
         draw.rectangle([(0, 20), (240, 240)], fill="BLACK")
@@ -146,6 +170,10 @@ while True:
         # power icon
         if keys.is_ext_power_available():
             draw.polygon(tadd(XYPOW, [(7,0), (0,10), (4,9), (1,16), (10,6), (5,7)]), fill="LIGHTGREEN")
+        # network info
+        SSID = get_wifi_ssid()
+        IP = get_ip()
+        draw.text(XYNET, IP + (" " * (39 - len(SSID) - len(IP))) + SSID, fill = "YELLOW")
     counter+=1
 
 

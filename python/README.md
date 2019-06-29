@@ -72,7 +72,6 @@ systemctl --user enable foopm3
 
 * enable fb on boot to get dmesgs? Then disable fb when starting foopm3...
 * detect when pm3 is not connected and handle it properly
-* display Wi-Fi, display IP
 * GUI menus, see below
 
 For shell/proxmark commands:
