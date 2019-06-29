@@ -42,8 +42,18 @@ font = ImageFont.truetype('/usr/share/fonts/truetype/freefont/FreeMonoBold.ttf',
 
 # Welcome screen
 
-image1 = Image.open(os.path.join(scriptpath, 'pic.jpg'))
+image1 = Image.open(os.path.join(scriptpath, 'illuminated_rfid_240.png'))
 draw = ImageDraw.Draw(image1)
+
+if os.path.isfile(os.path.join(scriptpath, 'maintenance')):
+#    print('maintenance')
+    draw.rectangle([(15,70),(230,100)],fill = "BLACK")
+    draw.text((20, 70), 'Maintenance', fill = "LIGHTBLUE", font=font)
+    disp.ShowImage(image1,0,0)
+    while os.path.isfile(os.path.join(scriptpath, 'maintenance')):
+        time.sleep(1)
+    exit(0)
+
 draw.rectangle([(15,70),(195,100)],fill = "BLACK")
 draw.text((20, 70), 'Proxmark3', fill = "LIGHTBLUE", font=font)
 draw.text((19, 139), 'Wardriving', fill = "WHITE", font=font)
@@ -58,7 +68,6 @@ time.sleep(2)
 
 # Create blank image for drawing.
 image1 = Image.new("RGB", (disp.width, disp.height), "BLACK")
-#image1 = Image.open(os.path.join(scriptpath, 'illuminated_rfid_240.png'))
 draw = ImageDraw.Draw(image1)
 
 cmds=["hw status", "hf search", "lf search"]
@@ -128,7 +137,7 @@ while True:
         # battery stats
         v, c = ups.get_voltage(), ups.get_capacity()
         BATSTAT="%.2fV %i%%" %(v, c)
-        print (BATSTAT)
+        #print (BATSTAT)
         draw.text(XYVAL, BATSTAT, fill = "LIGHTGREEN")
         # battery icon
         draw.rectangle(tadd(XYBAT, [(2,0), (2+25,10)]), outline = "LIGHTGREEN")
