@@ -1,3 +1,5 @@
+# Libraries
+
 ## UPS_Lite
 
 ```
@@ -47,11 +49,11 @@ It requires the solder jumper to be bridged.
 |ext_power|UPS usb   | Caps lock     |
 
 
-## foopm3
+# foopm3
 
 First attempt at a GUI...
 
-To install it as a startup service:
+## install it as a startup service
 
 ```
 mkdir -p ~/.config/systemd/user/
@@ -60,3 +62,37 @@ ln -s ~/rpizerogui/python/foopm3.service ~/.config/systemd/user/
 sudo loginctl enable-linger pi
 systemctl --user enable foopm3
 ```
+
+## usage
+
+* pull to left for 2s from main screen to quit. As it's a service it'll be restarted automatically.
+* create "maintenance" file in `~/rpizerogui/python` to stall foopm3 service and be able to use the LCD
+
+## TODO list
+
+* enable fb on boot to get dmesgs? Then disable fb when starting foopm3...
+* detect when pm3 is not connected and handle it properly
+* display Wi-Fi, display IP
+* GUI menus, see below
+
+For shell/proxmark commands:
+
+* wrap results display
+* scroll results display
+
+### TODO menu Level 1: Shell commands
+
+* reactivate fb and get shell with BT/USB keyboard??
+* wifi config
+* pm3 git pull    (! require http public repo)
+* pm3 make clean
+* pm3 make
+* pm3 flash-all
+* pm3 client => menu 2
+* shutdown -h now
+* gui git pull
+
+### TODO menu Level 2: Proxmark commands
+
+* interactive expect-style
+* handle interactive cmds...
