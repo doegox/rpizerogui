@@ -167,10 +167,10 @@ def display_menu(cmds, level):
                 display_menu(cmds[cur_bullet][1], level+1)
             else:
                 try:
-                    out = subprocess.check_output(cmds[cur_bullet][1], shell=True)
+                    out = subprocess.check_output(cmds[cur_bullet][1], shell=True, stderr=subprocess.STDOUT)
                     display_output(out)
-                except subprocess.CalledProcessError, e:
-                    display_output(str(e))
+                except subprocess.CalledProcessError as exc:
+                    display_output("FAILED:\n" + exc.output)
             init_cmds(cmds, cur_bullet)
 
         if counter == MAXCOUNTER:
