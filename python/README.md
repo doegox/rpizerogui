@@ -74,6 +74,7 @@ systemctl --user enable foopm3
 * enable fb on boot to get dmesgs? Then disable fb when starting foopm3...
 * detect when pm3 is not connected and handle it properly
 * GUI menus, see below
+* GUI: avoid 100% CPU and still stay reactive...
 
 ### TODO menu Level 1: Shell commands
 
