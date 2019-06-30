@@ -80,13 +80,7 @@ systemctl --user enable foopm3
 
 * reactivate fb and get shell with BT/USB keyboard??
 * wifi config
-* pm3 git pull    (! require http public repo)
-* pm3 make clean
-* pm3 make
-* pm3 flash-all
-* pm3 client => menu 2
-* shutdown -h now
-* gui git pull
+* display output progressively, not just after full exec
 
 ### TODO menu Level 2: Proxmark commands
 
