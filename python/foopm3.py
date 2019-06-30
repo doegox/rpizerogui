@@ -34,7 +34,8 @@ def tadd(a, b):
 
 def get_wifi_ssid():
     try:
-        scanoutput = subprocess.check_output(["iw", "wlan0", "info"], stderr=devnull)
+        with open(os.devnull, 'w') as devnull:
+            scanoutput = subprocess.check_output(["iw", "wlan0", "info"], stderr=devnull)
         for line in scanoutput.split('\n'):
             line = line.decode("utf-8").strip()
             if line[:4]  == "ssid":
@@ -45,7 +46,8 @@ def get_wifi_ssid():
 
 def get_ip():
     try:
-        ipoutput = subprocess.check_output(["ip", "-f", "inet", "addr", "show", "wlan0"], stderr=devnull)
+        with open(os.devnull, 'w') as devnull:
+            ipoutput = subprocess.check_output(["ip", "-f", "inet", "addr", "show", "wlan0"], stderr=devnull)
         for line in ipoutput.split('\n'):
             line = line.decode("utf-8").strip()
             if line[:4]  == "inet":
