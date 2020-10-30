@@ -143,3 +143,17 @@ sudo raspi-config
 ```
 sudo apt-get install python-spidev python-numpy python-pil fonts-freefont-ttf
 ```
+
+## Pics...
+
+<p align='center'>
+<img src="imgs/PM3_RDV4_RPiZ_USB.jpg" width="400px"/>
+</p>
+
+<p align='center'>
+<img src="imgs/PM3_RDV4_RPiZ_Bluetooth.jpg" width="200px"/>
+</p>
+
+<p align='center'>
+<img src="imgs/PM3_RDV4_flashed_over_JTAG_by_RPiZ.jpg" width="400px"/>
+</p>
